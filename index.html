@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Al-Leen | Master Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bc-primary:#0B2D63;
+  --bc-secondary:#1C7AD6;
+  --ground:#F1F5F9;
+  --paper:#FFFFFF;
+  --ink:#0F172A;
+  --ink-2:rgba(15,23,42,.65);
+  --line:rgba(15,44,89,.12);
+  --line-strong:rgba(15,44,89,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:'Hind Siliguri',sans-serif;font-size:16px;line-height:1.6;padding-bottom:60px}
+h1,h2,h3{font-family:'Anek Bangla',sans-serif;font-weight:800;margin:0}
+img,video{max-width:100%;height:auto;display:block}
+button,input,select,textarea{font:inherit;color:inherit}
+
+.admin-wrap{max-width:1160px;margin:0 auto;padding:16px}
+.admin-header{background:var(--bc-primary);color:#FFF;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-radius:10px;margin-bottom:20px}
+.admin-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:20px;white-space:nowrap}
+.admin-tab-btn{background:#FFF;border:1px solid var(--line-strong);padding:10px 20px;border-radius:20px;font-weight:700;color:var(--bc-primary);cursor:pointer}
+.admin-tab-btn.active{background:var(--bc-secondary);color:#FFF;border-color:var(--bc-secondary)}
+
+.admin-card{background:#FFF;border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,0.03)}
+.admin-card h3{font-size:18px;color:var(--bc-primary);margin-bottom:16px}
+.card-head-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.card-head-row h3{margin-bottom:0}
+.action-group{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stats-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:16px}
+@media(min-width:700px){.stats-grid{grid-template-columns:repeat(3, 1fr)}}
+.stat-box{background:var(--ground);border:1px solid var(--line);padding:16px;border-radius:10px;display:flex;flex-direction:column;gap:4px}
+.stat-box span{font-size:13px;color:var(--ink-2);font-weight:600}
+.stat-box b{font-size:24px;color:var(--bc-primary);font-family:'Anek Bangla',sans-serif}
+
+.admin-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+.admin-table th,.admin-table td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.admin-table th{background:var(--ground);color:var(--bc-primary);font-weight:700}
+.order-date-tag{display:inline-block;margin-top:4px;font-size:12px;color:#0B2D63;background:#E0F2FE;padding:2px 8px;border-radius:6px;font-weight:600}
+.stock-pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700;margin-top:4px}
+.stock-pill.in{background:#DCFCE7;color:#15803D}
+.stock-pill.out{background:#FEE2E2;color:#B91C1C}
+.row-check{width:18px;height:18px;accent-color:var(--bc-secondary);cursor:pointer}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+label{font-weight:600;font-size:14px}
+input,select,textarea{min-height:44px;border:1px solid var(--line-strong);background:var(--paper);border-radius:8px;padding:10px 14px;width:100%;font-size:15px}
+textarea{min-height:80px;resize:vertical}
+.checkbox-field{display:flex;align-items:center;gap:10px;margin:8px 0;font-weight:600;cursor:pointer}
+.checkbox-field input{width:18px;height:18px;accent-color:var(--bc-secondary)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none}
+.btn--primary{background:var(--bc-secondary);color:#FFF}
+.btn--success{background:#059669;color:#FFF}
+.btn--danger{background:#DC2626;color:#FFF}
+.btn--edit{background:#D97706;color:#FFF}
+.btn--dark{background:#334155;color:#FFF}
+
+/* Login Gate Overlay Styles (Only for Login Screen) */
+.auth-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.auth-box{background:#FFF;border:1px solid var(--line);border-radius:14px;padding:28px 24px;width:100%;max-width:420px;box-shadow:0 10px 28px rgba(11,45,99,0.1)}
+.auth-box h2{font-size:22px;color:var(--bc-primary);text-align:center;margin-bottom:6px}
+.auth-sub{text-align:center;font-size:14px;color:var(--ink-2);margin:0 0 20px}
+.auth-msg{font-size:13px;font-weight:700;padding:10px 12px;border-radius:8px;margin-top:12px;display:none}
+.auth-msg.err{background:#FEF2F2;color:#DC2626;border:1px solid #FCA5A5}
+.auth-msg.ok{background:#ECFDF5;color:#059669;border:1px solid #6EE7B7}
+.forgot-link{background:none;border:none;color:var(--bc-secondary);font-size:14px;font-weight:700;cursor:pointer;padding:6px 0;text-align:right;width:100%;display:block}
+</style>
+</head>
+<body>
+
+<!-- ADMIN LOGIN SCREEN (Shown when not logged in) -->
+<div id="adminLoginScreen" class="auth-gate">
+  <div class="auth-box">
+    <h2>🔐 Al-Leen Admin Login</h2>
+    <p class="auth-sub">অ্যাডমিন প্যানেলে প্রবেশ করতে আপনার ইমেইল ও পাসওয়ার্ড দিন</p>
+    <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+      <div class="field">
+        <label>Admin Email</label>
+        <input type="email" id="loginEmail" placeholder="আপনার অ্যাডমিন ইমেইল লিখুন" required autocomplete="username">
+      </div>
+      <div class="field" style="margin-bottom:4px">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="আপনার পাসওয়ার্ড লিখুন" required autocomplete="current-password">
+      </div>
+      <button type="button" class="forgot-link" onclick="handleForgotPassword()">পাসওয়ার্ড ভুলে গেছেন? (Forgot Password)</button>
+      <button type="submit" id="loginSubmitBtn" class="btn btn--primary" style="width:100%;margin-top:12px;min-height:44px;font-size:16px">লগইন করুন</button>
+      <div id="authStatusMsg" class="auth-msg"></div>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN ADMIN PANEL (Hidden until authenticated) -->
+<div id="adminMainApp" class="admin-wrap" style="display:none">
+  <div class="admin-header">
+    <h2>⚡ Al-Leen Master Control Panel</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <a href="index.html" class="btn" style="background:#FFF;color:var(--bc-primary)">🌐 লাইভ শপ দেখুন</a>
+      <button type="button" class="btn btn--danger" onclick="handleAdminLogout()">🚪 লগআউট</button>
+    </div>
+  </div>
+
+  <div class="admin-tabs">
+    <button type="button" class="admin-tab-btn active" onclick="switchTab('dashboard', this)">📊 ড্যাশবোর্ড</button>
+    <button type="button" class="admin-tab-btn" onclick="switchTab('products', this)">📦 ক্যাটাগরি ও প্রোডাক্ট কন্ট্রোল</button>
+    <button type="button" class="admin-tab-btn" onclick="switchTab('reviews', this)">⭐ রিভিউ মডারেশন</button>
+    <button type="button" class="admin-tab-btn" onclick="switchTab('orders', this)">🛍️ অর্ডার লিস্ট</button>
+    <button type="button" class="admin-tab-btn" onclick="switchTab('settings', this)">⚙️ গ্লোবাল সেটিংস</button>
+  </div>
+
+  <!-- TAB 1: DASHBOARD -->
+  <div id="tab-dashboard" class="admin-section">
+    <div class="admin-card">
+      <div class="card-head-row">
+        <h3>ওভারভিউ সামারি</h3>
+        <button type="button" class="btn btn--danger" onclick="deleteAllMoneyAndSalesHistory()">🗑️ টাকার হিস্ট্রি ডিলিট</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><span>মোট প্রোডাক্ট</span><b id="statTotalProd">০</b></div>
+        <div class="stat-box"><span>মোট অর্ডার</span><b id="statTotalOrders">০</b></div>
+        <div class="stat-box"><span>মোট বিক্রয়</span><b id="statTotalSales">৳০</b></div>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-head-row">
+        <h3>📅 তারিখ অনুযায়ী অর্ডার ও মোট বিক্রয় রিপোর্ট</h3>
+        <button type="button" class="btn btn--danger" onclick="deleteAllMoneyAndSalesHistory()">🗑️ সব টাকার হিস্ট্রি ডিলিট</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr><th>তারিখ</th><th>জমা হওয়া অর্ডার সংখ্যা</th><th>মোট বিক্রয় (৳)</th><th>অ্যাকশন</th></tr></thead>
+          <tbody id="dashDateSummaryBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: PRODUCTS & CATEGORY CONTROL -->
+  <div id="tab-products" class="admin-section" style="display:none">
+    <div class="admin-card">
+      <h3 id="formTitleHeading">নতুন পণ্য যোগ করুন (ক্যাটাগরি সহ)</h3>
+      <form onsubmit="handleSaveProduct(event)" style="display:flex;flex-direction:column;gap:10px">
+        <input type="hidden" id="editProductId">
+        <div class="field"><label>পণ্যের নাম</label><input type="text" id="pName" required></div>
+        <div class="field"><label>আগের দাম / রেগুলার দাম (৳) (ঐচ্ছিক)</label><input type="number" id="pOld" placeholder="যেমন: 500"></div>
+        <div class="field"><label>বর্তমান অফার দাম / মূল দাম (৳)<span style="color:red">*</span></label><input type="number" id="pPrice" required></div>
+
+        <div class="field">
+          <label>স্টক আছে নাকি নাই?</label>
+          <select id="pStockStatus">
+            <option value="in">স্টকে আছে (অর্ডার চালু)</option>
+            <option value="out">স্টক শেষ (অর্ডার বন্ধ)</option>
+          </select>
+        </div>
+        
+        <!-- ক্যাটাগরি সিলেক্ট করার ড্রপডাউন মেনু -->
+        <div class="field">
+          <label>প্রধান ক্যাটাগরি নির্বাচন করুন<span style="color:red">*</span></label>
+          <select id="pCat" required onchange="handleCategoryChange()">
+            <option value="skincare">Skincare (স্কিন কেয়ার)</option>
+            <option value="clothing">Clothing (পোশাক)</option>
+            <option value="gadgets">Gadgets (গ্যাজেট)</option>
+          </select>
+        </div>
+
+        <!-- সাব-ক্যাটাগরি (শুধুমাত্র Clothing সিলেক্ট করলে দেখাবে) -->
+        <div class="field" id="subcatField" style="display:none">
+          <label>পোশাকের ধরণ (সাব-ক্যাটাগরি)</label>
+          <select id="pSubcat">
+            <option value="">-- সাব-ক্যাটাগরি নির্বাচন করুন --</option>
+            <option value="kids">Kids Clothing (বাচ্চাদের পোশাক)</option>
+            <option value="adult">Adult Clothing (বড়দের পোশাক)</option>
+          </select>
+        </div>
+
+        <div class="field"><label>ছবি বা ভিডিওর ফাইলের নাম / লিংক</label><input type="text" id="pImg" required></div>
+        
+        <div class="field">
+          <label>⏱️ ফ্ল্যাশ সেল টাইমার কত ঘণ্টা চলবে?</label>
+          <input type="number" id="pTimerHours" value="4">
+        </div>
+
+        <label class="checkbox-field">
+          <input type="checkbox" id="pStockUrgency" checked>
+          <span>"🔥 হট ডিল - স্টক সীমিত!" নোটিশ দেখান</span>
+        </label>
+        <label class="checkbox-field">
+          <input type="checkbox" id="pTimer" checked>
+          <span>টাইমার অন রাখুন</span>
+        </label>
+
+        <div class="field"><label>বিস্তারিত বিবরণ</label><textarea id="pDesc"></textarea></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn--primary" type="submit" id="saveProductBtn">পণ্য সেভ করুন</button>
+          <button class="btn" type="button" id="cancelEditBtn" onclick="resetProductForm()" style="display:none;background:#94A3B8;color:#FFF">এডিট বাতিল</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h3>সকল পণ্যের তালিকা ও ক্যাটাগরি</h3>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr><th>মিডিয়া</th><th>নাম</th><th>দাম ও স্টক</th><th>ক্যাটাগরি</th><th>অ্যাকশন</th></tr></thead>
+          <tbody id="adminProductTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: REVIEWS -->
+  <div id="tab-reviews" class="admin-section" style="display:none">
+    <div class="admin-card">
+      <h3>⭐ কাস্টমার রিভিউ মডারেশন</h3>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr><th>পণ্যের আইডি</th><th>নাম</th><th>রেটিং</th><th>কমেন্ট</th><th>অ্যাকশন</th></tr></thead>
+          <tbody id="adminReviewTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: ORDERS -->
+  <div id="tab-orders" class="admin-section" style="display:none">
+    <div class="admin-card">
+      <div class="card-head-row">
+        <h3>📅 তারিখ অনুযায়ী অর্ডার ও বিক্রয় হিসাব</h3>
+        <button type="button" class="btn btn--danger" onclick="deleteAllMoneyAndSalesHistory()">🗑️ সব টাকার হিস্ট্রি ডিলিট</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr><th>তারিখ</th><th>মোট অর্ডার</th><th>মোট বিক্রি</th><th>অ্যাকশন</th></tr></thead>
+          <tbody id="orderDateSummaryBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <div class="card-head-row">
+        <h3>গ্রাহকদের অর্ডার তালিকা</h3>
+        <div class="action-group">
+          <button type="button" class="btn btn--success" onclick="copyAllOrders()">📋 সম্পূর্ণ অর্ডার লিস্ট কপি করুন</button>
+          <button type="button" class="btn btn--edit" onclick="deleteSelectedOrders()">☑️ বাছাইকৃত অর্ডার ডিলিট</button>
+          <button type="button" class="btn btn--danger" onclick="deleteAllOrders()">🗑️ সব অর্ডার লিস্ট ডিলিট</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox" id="selectAllOrdersCheck" class="row-check" onchange="toggleSelectAllOrders(this)" title="সব অর্ডার সিলেক্ট করুন"></th>
+              <th>অর্ডার নং ও তারিখ</th>
+              <th>কাস্টমার ও ঠিকানা</th>
+              <th>ফোন</th>
+              <th>পণ্য</th>
+              <th>মোট বিল</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrderTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: SETTINGS -->
+  <div id="tab-settings" class="admin-section" style="display:none">
+    <div class="admin-card">
+      <h3>গ্লোবাল সেটিংস</h3>
+      <form onsubmit="handleSaveSettings(event)" style="display:flex;flex-direction:column;gap:10px">
+        <div class="field"><label>দোকানের নাম</label><input type="text" id="setShop" required></div>
+        <div class="field"><label>স্লোগান বা ট্যাগলাইন</label><input type="text" id="setField" required></div>
+        <div class="field"><label>ঠিকানা</label><input type="text" id="setAddr" required></div>
+        <div class="field"><label>WhatsApp নম্বর</label><input type="text" id="setPhone" required></div>
+        <div class="field"><label>Facebook লিংক</label><input type="text" id="setFacebook"></div>
+        <div class="field"><label>ব্যানার ছবি বা ফাইলের নাম</label><input type="text" id="setBanner" required></div>
+        <div class="field"><label>লোগো ছবি বা ফাইলের নাম</label><input type="text" id="setLogo" placeholder="যেমন: logo.png বা লোগোর লিংক" required></div>
+        <button class="btn btn--primary" type="submit">সেটিংস সেভ করুন</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase Realtime Database & Auth SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDnjG5ctWRX_" + "-1O61fqNnbck12oR" + "02sKx4",
+  authDomain: "al-leen-website-1.firebaseapp.com",
+  databaseURL: "https://al-leen-website-1-default-rtdb.firebaseio.com",
+  projectId: "al-leen-website-1",
+  storageBucket: "al-leen-website-1.firebasestorage.app",
+  messagingSenderId: "793325518491",
+  appId: "1:793325518491:web:77c48cd9e065307418903e"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+const ALLOWED_ADMIN_EMAIL = "anamulhaqueyunus@gmail.com";
+let adminSyncStarted = false;
+
+function showAuthMessage(text, isError = true) {
+  const el = document.getElementById('authStatusMsg');
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'auth-msg ' + (isError ? 'err' : 'ok');
+  el.style.display = 'block';
+}
+
+function handleAdminLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('loginSubmitBtn');
+
+  if (email !== ALLOWED_ADMIN_EMAIL.toLowerCase()) {
+    showAuthMessage('❌ শুধুমাত্র অনুমোদিত অ্যাডমিন ইমেইল দিয়ে লগইন করা যাবে।', true);
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'যাচাই করা হচ্ছে...';
+  document.getElementById('authStatusMsg').style.display = 'none';
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => {
+      btn.disabled = false;
+      btn.textContent = 'লগইন করুন';
+    })
+    .catch((err) => {
+      btn.disabled = false;
+      btn.textContent = 'লগইন করুন';
+      let msg = 'লগইন ব্যর্থ হয়েছে। ইমেইল ও পাসওয়ার্ড আবার চেক করুন।';
+      if (err && (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential')) {
+        msg = '❌ পাসওয়ার্ড ভুল হয়েছে। সঠিক পাসওয়ার্ড দিন অথবা নিচে "পাসওয়ার্ড ভুলে গেছেন?" ক্লিক করুন।';
+      } else if (err && err.code === 'auth/user-not-found') {
+        msg = '❌ এই ইমেইলে কোনো অ্যাডমিন অ্যাকাউন্ট তৈরি করা নেই। Firebase Console > Authentication থেকে ইউজারটি তৈরি করুন।';
+      } else if (err && err.code === 'auth/too-many-requests') {
+        msg = '⚠️ অনেকবার ভুল চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+      }
+      showAuthMessage(msg, true);
+    });
+}
+
+function handleForgotPassword() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  if (!email) {
+    showAuthMessage('আগে আপনার অ্যাডমিন ইমেইল লিখুন।', true);
+    return;
+  }
+  if (email !== ALLOWED_ADMIN_EMAIL.toLowerCase()) {
+    showAuthMessage('❌ শুধুমাত্র অনুমোদিত অ্যাডমিন ইমেইলের জন্য পাসওয়ার্ড রিসেট পাঠানো যাবে।', true);
+    return;
+  }
+
+  auth.sendPasswordResetEmail(email)
+    .then(() => {
+      showAuthMessage('✅ পাসওয়ার্ড রিসেট লিংক আপনার ইমেইলে (' + email + ') পাঠানো হয়েছে! ইনবক্স বা স্প্যাম ফোল্ডার চেক করুন।', false);
+    })
+    .catch((err) => {
+      let msg = 'রিসেট ইমেইল পাঠানো যায়নি। Firebase Authentication-এ ইউজারটি যুক্ত আছে কি না দেখুন।';
+      if (err && err.code === 'auth/user-not-found') {
+        msg = '❌ এই ইমেইলে Firebase Authentication-এ কোনো অ্যাকাউন্ট পাওয়া যায়নি।';
+      }
+      showAuthMessage(msg, true);
+    });
+}
+
+function handleAdminLogout() {
+  if (!confirm('আপনি কি অ্যাডমিন প্যানেল থেকে লগআউট করতে চান?')) return;
+  auth.signOut().then(() => {
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('authStatusMsg').style.display = 'none';
+  });
+}
+
+const store = (() => {
+  let mem = {};
+  try {
+    localStorage.setItem('__t', '1'); localStorage.removeItem('__t');
+    return {
+      get: (k, d) => { try { const val = localStorage.getItem(k); return val !== null ? JSON.parse(val) : d; } catch { return d; } },
+      set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+    };
+  } catch {
+    return { get: (k, d) => (k in mem ? mem[k] : d), set: (k, v) => { mem[k] = v; } };
+  }
+})();
+
+const DEFAULT_SETTINGS = {
+  shop: 'Al-Leen',
+  field: 'একটি বিশ্বস্ত অনলাইন শপ',
+  addr: 'আমাদের ঠিকানা: নরসিংদী সদর, নরসিংদী',
+  phone: '8801837060739',
+  facebook: 'https://www.facebook.com/share/1K6gppgHS6/',
+  banner: 'bener2.png',
+  logo: 'logo.png'
+};
+
+const SEED_PRODUCTS = [
+  { id:'sk1', name:'অ্যালোভেরা ফেস ওয়াশ (ডেমো)', oldPrice:450, price:350, inStock:true, category:'skincare', subcategory:'', img:'https://images.pexels.com/photos/4465124/pexels-photo-4465124.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'গভীর থেকে ত্বক পরিষ্কার করে এবং সতেজ ভাব আনে।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'sk2', name:'গ্লোয়িং ফেস ময়েশ্চারাইজার (ডেমো)', oldPrice:700, price:550, inStock:true, category:'skincare', subcategory:'', img:'https://images.pexels.com/photos/3685538/pexels-photo-3685538.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'ত্বক উজ্জ্বল ও হাইড্রেটেড রাখতে প্রিমিয়াম ক্রিম।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'sk3', name:'ভিটামিন সি ব্রাইটেনিং সিরাম (ডেমো)', oldPrice:850, price:650, inStock:true, category:'skincare', subcategory:'', img:'https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'ত্বকের কালো দাগ দূর করে প্রাকৃতিক উজ্জ্বলতা ফেরায়।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'sk4', name:'সানস্ক্রিন এসপিএফ ৫০+ লোশন (ডেমো)', oldPrice:600, price:480, inStock:true, category:'skincare', subcategory:'', img:'https://images.pexels.com/photos/3735657/pexels-photo-3735657.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'সূর্যের ক্ষতিকর রশ্মি থেকে ত্বককে সুরক্ষিত রাখে।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'sk5', name:'রোজ ওয়াটার ফেস টোনার (ডেমো)', oldPrice:380, price:290, inStock:true, category:'skincare', subcategory:'', img:'https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'ত্বকের পোরস টাইট করে ও সতেজতা বজায় রাখে।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'sk6', name:'নাইট রিপেয়ারিং জেল ক্রিম (ডেমো)', oldPrice:900, price:720, inStock:true, category:'skincare', subcategory:'', img:'https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'রাতে ঘুমের মধ্যে ত্বকের কোষ সজীব ও মসৃণ করে।', showStockUrgency:true, showTimer:true, timerHours:4 },
+
+  { id:'gd1', name:'ওয়্যারলেস ব্লুটুথ হেডফোন (ডেমো)', oldPrice:1600, price:1250, inStock:true, category:'gadgets', subcategory:'', img:'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'সুপার বেস সাউন্ড এবং দীর্ঘক্ষণ ব্যাটারি ব্যাকআপ।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'gd2', name:'স্মার্ট ফিটনেস ওয়াচ প্রো (ডেমো)', oldPrice:2200, price:1750, inStock:true, category:'gadgets', subcategory:'', img:'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'কলিং ফিচার ও হেলথ ট্র্যাকিং সুবিধাযুক্ত স্মার্টওয়াচ।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'gd3', name:'টিডব্লিউএস এয়ারবাডস মিনি (ডেমো)', oldPrice:1200, price:890, inStock:true, category:'gadgets', subcategory:'', img:'https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'নয়েজ ক্যান্সেলেশনসহ ক্রিস্টাল ক্লিয়ার অডিও।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'gd4', name:'পোর্টেবল মিনি ব্লুটুথ স্পিকার (ডেমো)', oldPrice:1100, price:850, inStock:true, category:'gadgets', subcategory:'', img:'https://images.pexels.com/photos/1279107/pexels-photo-1279107.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'যেকোনো জায়গায় বহনযোগ্য শক্তিশালী সাউন্ড স্পিকার।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'gd5', name:'১০০০০ এমএএইচ ফাস্ট পাওয়ার ব্যাংক (ডেমো)', oldPrice:1500, price:1190, inStock:true, category:'gadgets', subcategory:'', img:'https://images.pexels.com/photos/4526407/pexels-photo-4526407.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'দ্রুত চার্জিং সুবিধাসম্পন্ন স্লিম পাওয়ার ব্যাংক।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'gd6', name:'রিচার্জেবল এলইডি টেবিল ল্যাম্প (ডেমো)', oldPrice:750, price:580, inStock:true, category:'gadgets', subcategory:'', img:'https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'পড়াশোনা ও অফিসের কাজের জন্য চোখের আরামদায়ক আলো।', showStockUrgency:true, showTimer:true, timerHours:4 },
+
+  { id:'kd1', name:'বাচ্চাদের কটন টি-শার্ট সেট (ডেমো)', oldPrice:650, price:490, inStock:true, category:'clothing', subcategory:'kids', img:'https://images.pexels.com/photos/1620760/pexels-photo-1620760.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'১০০% সফট সুতি কাপড়ের আরামদায়ক পোশাক।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'kd2', name:'বেবি গার্ল পার্টি ফ্রক (ডেমো)', oldPrice:1100, price:850, inStock:true, category:'clothing', subcategory:'kids', img:'https://images.pexels.com/photos/3661352/pexels-photo-3661352.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'উৎসব ও অনুষ্ঠানের জন্য আকর্ষণীয় ডিজাইনের ফ্রক।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'kd3', name:'কিডস ডেনিম জিন্স প্যান্ট (ডেমো)', oldPrice:800, price:620, inStock:true, category:'clothing', subcategory:'kids', img:'https://images.pexels.com/photos/1619697/pexels-photo-1619697.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'টেকসই এবং স্টাইলিশ বাচ্চাদের ডেনিম প্যান্ট।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'kd4', name:'বাচ্চাদের উইন্টার হুডি জ্যাকেট (ডেমো)', oldPrice:950, price:750, inStock:true, category:'clothing', subcategory:'kids', img:'https://images.pexels.com/photos/5693889/pexels-photo-5693889.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'শীতের উষ্ণতার জন্য নরম ও আরামদায়ক হুডি।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'kd5', name:'বেবি বয় কটন পাঞ্জাবি (ডেমো)', oldPrice:850, price:680, inStock:true, category:'clothing', subcategory:'kids', img:'https://images.pexels.com/photos/35537/child-children-girl-happy.jpg?auto=compress&cs=tinysrgb&w=650', desc:'যেকোনো অনুষ্ঠানে পরার জন্য চমৎকার সুতি পাঞ্জাবি।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'kd6', name:'কিডস ক্যাজুয়াল শার্ট ও শর্টস (ডেমো)', oldPrice:750, price:590, inStock:true, category:'clothing', subcategory:'kids', img:'https://images.pexels.com/photos/3932930/pexels-photo-3932930.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'গরমে প্রতিদিনের ব্যবহারের জন্য হালকা ও আরামদায়ক সেট।', showStockUrgency:true, showTimer:true, timerHours:4 },
+
+  { id:'ad1', name:'প্রিমিয়াম কটন পোলো টি-শার্ট (ডেমো)', oldPrice:750, price:550, inStock:true, category:'clothing', subcategory:'adult', img:'https://images.pexels.com/photos/428340/pexels-photo-428340.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'স্মার্ট ক্যাজুয়াল লুকের জন্য প্রিমিয়াম পোলো শার্ট।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'ad2', name:'মেনস ফরমাল এক্সিকিউটিভ শার্ট (ডেমো)', oldPrice:1250, price:950, inStock:true, category:'clothing', subcategory:'adult', img:'https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'অফিস ও মিটিংয়ের জন্য পারফেক্ট ফিটিং ফরমাল শার্ট।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'ad3', name:'উইমেনস থ্রি-পিস কটন ড্রেস (ডেমো)', oldPrice:1850, price:1450, inStock:true, category:'clothing', subcategory:'adult', img:'https://images.pexels.com/photos/994523/pexels-photo-994523.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'আকর্ষণীয় ডিজাইনের আরামদায়ক সুতি থ্রি-পিস।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'ad4', name:'মেনস স্ট্রেচেবল ডেনিম জিন্স (ডেমো)', oldPrice:1400, price:1100, inStock:true, category:'clothing', subcategory:'adult', img:'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'আধুনিক কাটিং ও আরামদায়ক ফ্যাব্রিকের ডেনিম জিন্স।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'ad5', name:'প্রিমিয়াম এমব্রয়ডারি পাঞ্জাবি (ডেমো)', oldPrice:1650, price:1290, inStock:true, category:'clothing', subcategory:'adult', img:'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'উৎসব ও বিশেষ দিনের জন্য অভিজাত ডিজাইনের পাঞ্জাবি।', showStockUrgency:true, showTimer:true, timerHours:4 },
+  { id:'ad6', name:'স্টাইলিশ ক্যাজুয়াল হুডি জ্যাকেট (ডেমো)', oldPrice:1350, price:1050, inStock:true, category:'clothing', subcategory:'adult', img:'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=650', desc:'শীতের ফ্যাশনেবল ও আরামদায়ক প্রিমিয়াম হুডি।', showStockUrgency:true, showTimer:true, timerHours:4 }
+];
+
+function isProductInStock(p) {
+  if (!p) return false;
+  if (typeof p.inStock === 'boolean') return p.inStock;
+  if (typeof p.stock === 'boolean') return p.stock;
+  if (typeof p.stock === 'number') return p.stock > 0;
+  return true;
+}
+
+function normalizeFirebaseList(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val.filter(Boolean);
+  return Object.keys(val).map(key => {
+    const item = val[key];
+    if (item && typeof item === 'object') {
+      return Object.assign({ id: item.id || key, _fbKey: key }, item);
+    }
+    return null;
+  }).filter(Boolean);
+}
+
+function getProducts() {
+  const isInitialized = store.get('alleen_seed_v2', false);
+  const saved = store.get('alleen_products', null);
+  if (!isInitialized && (!Array.isArray(saved) || saved.length === 0)) {
+    store.set('alleen_products', SEED_PRODUCTS);
+    store.set('alleen_seed_v2', true);
+    store.set('alleen_initialized', true);
+    return SEED_PRODUCTS;
+  }
+  return Array.isArray(saved) ? saved : [];
+}
+
+function syncProductsToFirebase(list) {
+  const mapObj = {};
+  (list || []).forEach(p => {
+    const cleanProd = Object.assign({}, p);
+    delete cleanProd._fbKey;
+    const key = cleanProd.id || ('p' + Date.now());
+    mapObj[key] = cleanProd;
+  });
+  db.ref('products').set(mapObj).catch(() => {});
+}
+
+function saveProducts(list) {
+  store.set('alleen_products', list);
+  store.set('alleen_seed_v2', true);
+  store.set('alleen_initialized', true);
+  syncProductsToFirebase(list);
+}
+
+function syncOrdersToFirebase(orders) {
+  const mapObj = {};
+  (orders || []).forEach(o => {
+    const cleanOrder = Object.assign({}, o);
+    const fbKey = cleanOrder._fbKey || cleanOrder.id || ('o' + Date.now());
+    delete cleanOrder._fbKey;
+    mapObj[fbKey] = cleanOrder;
+  });
+  db.ref('orders').set(mapObj).catch(() => {});
+}
+
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function getOrderDateKey(at) {
+  if (!at) return 'তারিখ অজানা';
+  const d = new Date(at);
+  if (isNaN(d.getTime())) return 'তারিখ অজানা';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function formatOrderDateBn(at) {
+  if (!at) return 'তারিখ অজানা';
+  const d = new Date(at);
+  if (isNaN(d.getTime())) return 'তারিখ অজানা';
+  const datePart = d.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+  const timePart = d.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+  return `${datePart} • ${timePart}`;
+}
+
+function getDateWiseSalesSummary(orders) {
+  const map = {};
+  (orders || []).forEach(o => {
+    const key = getOrderDateKey(o.at);
+    if (!map[key]) {
+      map[key] = {
+        key,
+        label: o.at && !isNaN(new Date(o.at).getTime()) ? new Date(o.at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' }) : 'তারিখ অজানা',
+        count: 0,
+        totalSales: 0
+      };
+    }
+    map[key].count += 1;
+    map[key].totalSales += Number(o.total || 0);
+  });
+  return Object.values(map).sort((a, b) => b.key.localeCompare(a.key));
+}
+
+function renderDateSummaryRows(orders) {
+  const rows = getDateWiseSalesSummary(orders);
+  if (!rows.length) {
+    return `<tr><td colspan="4" style="text-align:center">এখনো কোনো অর্ডার বা টাকার হিসাব নেই।</td></tr>`;
+  }
+  return rows.map(r => `
+    <tr>
+      <td><b>${esc(r.label)}</b></td>
+      <td><b>${Number(r.count).toLocaleString('bn-BD')}টি অর্ডার</b></td>
+      <td><b>৳${Number(r.totalSales).toLocaleString('bn-BD')}</b></td>
+      <td><button type="button" class="btn btn--danger" style="padding:4px 10px;font-size:12px" onclick="deleteDateHistory('${esc(r.key)}')">ডিলিট</button></td>
+    </tr>
+  `).join('');
+}
+
+function deleteDateHistory(dateKey) {
+  if (!confirm('এই তারিখের অর্ডার ও টাকার হিস্ট্রি ডিলিট করতে চান?')) return;
+  let orders = store.get('alleen_orders', []);
+  orders = orders.filter(o => getOrderDateKey(o.at) !== dateKey);
+  store.set('alleen_orders', orders);
+  syncOrdersToFirebase(orders);
+  loadDashboard();
+  loadOrders();
+}
+
+function deleteAllMoneyAndSalesHistory() {
+  if (!confirm('সমস্ত তারিখের অর্ডার সংখ্যা ও টাকার হিস্ট্রি ডিলিট করতে চান?')) return;
+  store.set('alleen_orders', []);
+  db.ref('orders').remove().catch(() => {});
+  loadDashboard();
+  loadOrders();
+}
+
+function copyTextToClipboard(text, successMsg) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => alert(successMsg)).catch(() => fallbackCopy(text, successMsg));
+  } else {
+    fallbackCopy(text, successMsg);
+  }
+}
+
+function fallbackCopy(text, successMsg) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    alert(successMsg);
+  } catch {
+    alert('কপি করা সম্ভব হয়নি।');
+  }
+  document.body.removeChild(ta);
+}
+
+function formatSingleOrderText(o) {
+  const lines = [
+    `অর্ডার নং: #${o.orderNo}`,
+    `তারিখ: ${formatOrderDateBn(o.at)}`,
+    `কাস্টমার: ${o.name || ''}`,
+    `ফোন: ${o.phone || ''}`,
+    `ঠিকানা: ${o.addr || ''}`,
+    `পণ্য: ${o.product || ''} (${Number(o.qty||1).toLocaleString('bn-BD')} পিস)`,
+    `মোট বিল: ৳${Number(o.total||0).toLocaleString('bn-BD')}`
+  ];
+  if (o.note) lines.push(`নোট: ${o.note}`);
+  return lines.join('\n');
+}
+
+function copySingleOrder(id) {
+  const orders = store.get('alleen_orders', []);
+  const order = orders.find(o => o.id === id);
+  if (!order) return;
+  copyTextToClipboard(formatSingleOrderText(order), `অর্ডার #${order.orderNo} এর তথ্য কপি হয়েছে!`);
+}
+
+function copyAllOrders() {
+  const orders = store.get('alleen_orders', []);
+  if (!orders.length) {
+    alert('কপি করার মতো কোনো অর্ডার নেই।');
+    return;
+  }
+  const allText = orders.map((o, i) => `--- অর্ডার ${i + 1} ---\n` + formatSingleOrderText(o)).join('\n\n');
+  copyTextToClipboard(allText, `মোট ${orders.length}টি অর্ডারের লিস্ট কপি হয়েছে!`);
+}
+
+function handleCategoryChange() {
+  const cat = document.getElementById('pCat').value;
+  const subField = document.getElementById('subcatField');
+  if (cat === 'clothing') {
+    subField.style.display = 'flex';
+  } else {
+    subField.style.display = 'none';
+    document.getElementById('pSubcat').value = '';
+  }
+}
+
+function switchTab(tabName, btnEl) {
+  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+  document.getElementById('tab-' + tabName).style.display = 'block';
+
+  if (tabName === 'dashboard') loadDashboard();
+  if (tabName === 'products') loadProducts();
+  if (tabName === 'reviews') loadReviews();
+  if (tabName === 'orders') loadOrders();
+  if (tabName === 'settings') loadSettings();
+}
+
+function loadDashboard() {
+  const products = getProducts();
+  const orders = store.get('alleen_orders', []);
+  let totalSalesVal = 0;
+  orders.forEach(o => totalSalesVal += Number(o.total || 0));
+
+  document.getElementById('statTotalProd').textContent = products.length.toLocaleString('bn-BD');
+  document.getElementById('statTotalOrders').textContent = orders.length.toLocaleString('bn-BD');
+  document.getElementById('statTotalSales').textContent = '৳' + totalSalesVal.toLocaleString('bn-BD');
+  document.getElementById('dashDateSummaryBody').innerHTML = renderDateSummaryRows(orders);
+}
+
+function loadProducts() {
+  const products = getProducts();
+  const settings = Object.assign({}, DEFAULT_SETTINGS, store.get('alleen_settings', {}));
+  const fallbackLogo = settings.logo || 'logo.png';
+  const tbody = document.getElementById('adminProductTableBody');
+  if (!products.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">কোনো পণ্য নেই। উপরে ফর্ম থেকে নতুন পণ্য যোগ করুন।</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = products.map((p) => {
+    const available = isProductInStock(p);
+    return `
+    <tr>
+      <td><img src="${esc(p.img)}" width="44" height="44" style="object-fit:cover;border-radius:4px" onerror="this.src='${esc(fallbackLogo)}'"></td>
+      <td><b>${esc(p.name)}</b></td>
+      <td>
+        <b>৳${Number(p.price||0).toLocaleString('bn-BD')}</b><br>
+        <span class="stock-pill ${available ? 'in' : 'out'}">${available ? 'স্টকে আছে' : 'স্টক শেষ'}</span>
+      </td>
+      <td><b>${esc((p.category||'').toUpperCase())}</b> ${p.subcategory ? '('+esc(p.subcategory.toUpperCase())+')' : ''}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" class="btn btn--success" style="padding:4px 10px;font-size:12px" onclick="toggleStockStatus('${esc(p.id)}')">স্টক বদলান</button>
+          <button type="button" class="btn btn--edit" style="padding:4px 10px;font-size:12px" onclick="editProduct('${esc(p.id)}')">এডিট</button>
+          <button type="button" class="btn btn--danger" style="padding:4px 10px;font-size:12px" onclick="deleteProduct('${esc(p.id)}')">ডিলিট</button>
+        </div>
+      </td>
+    </tr>
+  `}).join('');
+}
+
+function toggleStockStatus(id) {
+  let products = getProducts();
+  products = products.map(p => {
+    if (p.id === id) {
+      const nextStock = !isProductInStock(p);
+      return Object.assign({}, p, { inStock: nextStock, stock: nextStock ? 1 : 0 });
+    }
+    return p;
+  });
+  saveProducts(products);
+  loadProducts();
+}
+
+function handleSaveProduct(e) {
+  e.preventDefault();
+  let products = getProducts();
+  const editId = document.getElementById('editProductId').value;
+  const available = document.getElementById('pStockStatus').value === 'in';
+  
+  const productData = {
+    id: editId ? editId : 'p' + Date.now(),
+    name: document.getElementById('pName').value.trim(),
+    oldPrice: document.getElementById('pOld').value ? Number(document.getElementById('pOld').value) : '',
+    price: Number(document.getElementById('pPrice').value) || 0,
+    inStock: available,
+    stock: available ? 1 : 0,
+    category: document.getElementById('pCat').value,
+    subcategory: document.getElementById('pSubcat').value,
+    img: document.getElementById('pImg').value.trim(),
+    desc: document.getElementById('pDesc').value.trim(),
+    showStockUrgency: document.getElementById('pStockUrgency').checked,
+    showTimer: document.getElementById('pTimer').checked,
+    timerHours: Number(document.getElementById('pTimerHours').value) || 4
+  };
+
+  if (editId) {
+    products = products.map(p => p.id === editId ? productData : p);
+    alert('পণ্য ও ক্যাটাগরি সফলভাবে আপডেট করা হয়েছে!');
+  } else {
+    products.unshift(productData);
+    alert('নতুন পণ্য সফলভাবে যুক্ত করা হয়েছে!');
+  }
+
+  saveProducts(products);
+  resetProductForm();
+  loadProducts();
+  loadDashboard();
+}
+
+function editProduct(id) {
+  const products = getProducts();
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('editProductId').value = p.id;
+  document.getElementById('pName').value = p.name || '';
+  document.getElementById('pOld').value = p.oldPrice || '';
+  document.getElementById('pPrice').value = p.price || 0;
+  document.getElementById('pStockStatus').value = isProductInStock(p) ? 'in' : 'out';
+  document.getElementById('pCat').value = p.category || 'skincare';
+  handleCategoryChange();
+  document.getElementById('pSubcat').value = p.subcategory || '';
+  document.getElementById('pImg').value = p.img || '';
+  document.getElementById('pDesc').value = p.desc || '';
+  document.getElementById('pStockUrgency').checked = p.showStockUrgency !== false;
+  document.getElementById('pTimer').checked = p.showTimer !== false;
+  document.getElementById('pTimerHours').value = p.timerHours || 4;
+
+  document.getElementById('formTitleHeading').textContent = 'পণ্য ও ক্যাটাগরি এডিট করুন';
+  document.getElementById('saveProductBtn').textContent = 'পরিবর্তন সেভ করুন';
+  document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetProductForm() {
+  document.getElementById('editProductId').value = '';
+  document.getElementById('pName').value = '';
+  document.getElementById('pOld').value = '';
+  document.getElementById('pPrice').value = '';
+  document.getElementById('pStockStatus').value = 'in';
+  document.getElementById('pCat').value = 'skincare';
+  handleCategoryChange();
+  document.getElementById('pSubcat').value = '';
+  document.getElementById('pImg').value = '';
+  document.getElementById('pDesc').value = '';
+  document.getElementById('pStockUrgency').checked = true;
+  document.getElementById('pTimer').checked = true;
+  document.getElementById('pTimerHours').value = '4';
+
+  document.getElementById('formTitleHeading').textContent = 'নতুন পণ্য যোগ করুন (ক্যাটাগরি সহ)';
+  document.getElementById('saveProductBtn').textContent = 'পণ্য সেভ করুন';
+  document.getElementById('cancelEditBtn').style.display = 'none';
+}
+
+function deleteProduct(id) {
+  if (!confirm('পণ্যটি ডিলিট করতে চান?')) return;
+  let products = getProducts();
+  products = products.filter(p => p.id !== id);
+  saveProducts(products);
+  loadProducts();
+  loadDashboard();
+}
+
+function loadReviews() {
+  const allReviews = store.get('alleen_reviews', {});
+  const tbody = document.getElementById('adminReviewTableBody');
+  let html = '';
+  Object.keys(allReviews).forEach(prodId => {
+    (allReviews[prodId] || []).forEach((r, idx) => {
+      const fbRefKey = r._fbKey || '';
+      html += `<tr><td><b>${esc(prodId)}</b></td><td>${esc(r.name)}</td><td>${esc(r.rating)}/5</td><td>${esc(r.comment)}</td><td><button type="button" class="btn btn--danger" style="padding:4px 10px;font-size:12px" onclick="deleteReview('${esc(prodId)}', ${idx}, '${esc(fbRefKey)}')">ডিলিট</button></td></tr>`;
+    });
+  });
+  tbody.innerHTML = html || `<tr><td colspan="5" style="text-align:center">কোনো রিভিউ নেই।</td></tr>`;
+}
+
+function deleteReview(prodId, index, fbRefKey) {
+  if (!confirm('রিভিউ ডিলিট করতে চান?')) return;
+  let allReviews = store.get('alleen_reviews', {});
+  if (allReviews[prodId]) {
+    allReviews[prodId].splice(index, 1);
+    store.set('alleen_reviews', allReviews);
+    if (fbRefKey) {
+      db.ref(`reviews/${prodId}/${fbRefKey}`).remove().catch(() => {});
+    } else {
+      const remainingMap = {};
+      (allReviews[prodId] || []).forEach((item, i) => {
+        const cleanItem = Object.assign({}, item);
+        const k = cleanItem._fbKey || ('r' + i);
+        delete cleanItem._fbKey;
+        remainingMap[k] = cleanItem;
+      });
+      db.ref(`reviews/${prodId}`).set(Object.keys(remainingMap).length ? remainingMap : null).catch(() => {});
+    }
+    loadReviews();
+  }
+}
+
+function loadOrders() {
+  const orders = store.get('alleen_orders', []);
+  const selectAllEl = document.getElementById('selectAllOrdersCheck');
+  if (selectAllEl) selectAllEl.checked = false;
+  document.getElementById('orderDateSummaryBody').innerHTML = renderDateSummaryRows(orders);
+  const tbody = document.getElementById('adminOrderTableBody');
+  if (!orders.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center">কোনো অর্ডার নেই।</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = orders.map(o => `
+    <tr>
+      <td><input type="checkbox" class="row-check order-select-check" value="${esc(o.id)}"></td>
+      <td>
+        <b>#${esc(o.orderNo)}</b><br>
+        <span class="order-date-tag">📅 ${esc(formatOrderDateBn(o.at))}</span>
+      </td>
+      <td><b>${esc(o.name)}</b><br><small>${esc(o.addr)}</small>${o.note ? `<br><small style="color:#D97706">নোট: ${esc(o.note)}</small>` : ''}</td>
+      <td><b>${esc(o.phone)}</b></td>
+      <td>${esc(o.product)} (${Number(o.qty||1).toLocaleString('bn-BD')} পিস)</td>
+      <td><b>৳${Number(o.total||0).toLocaleString('bn-BD')}</b></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" class="btn btn--primary" style="padding:4px 10px;font-size:12px" onclick="copySingleOrder('${esc(o.id)}')">📋 কপি</button>
+          <button type="button" class="btn btn--danger" style="padding:4px 10px;font-size:12px" onclick="deleteOrder('${esc(o.id)}')">ডিলিট</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function toggleSelectAllOrders(masterEl) {
+  document.querySelectorAll('.order-select-check').forEach(cb => {
+    cb.checked = masterEl.checked;
+  });
+}
+
+function deleteSelectedOrders() {
+  const checkedIds = Array.from(document.querySelectorAll('.order-select-check:checked')).map(cb => cb.value);
+  if (!checkedIds.length) {
+    alert('আগে কমপক্ষে একটি অর্ডার বাছাই করুন।');
+    return;
+  }
+  if (!confirm(`বাছাইকৃত ${checkedIds.length}টি অর্ডার ডিলিট করতে চান?`)) return;
+  let orders = store.get('alleen_orders', []);
+  orders = orders.filter(o => !checkedIds.includes(o.id));
+  store.set('alleen_orders', orders);
+  syncOrdersToFirebase(orders);
+  loadOrders();
+  loadDashboard();
+}
+
+function deleteAllOrders() {
+  const orders = store.get('alleen_orders', []);
+  if (!orders.length) {
+    alert('ডিলিট করার মতো কোনো অর্ডার নেই।');
+    return;
+  }
+  if (!confirm('পুরো অর্ডার লিস্ট (সব অর্ডার) ডিলিট করতে চান?')) return;
+  store.set('alleen_orders', []);
+  db.ref('orders').remove().catch(() => {});
+  loadOrders();
+  loadDashboard();
+}
+
+function deleteOrder(id) {
+  if (!confirm('অর্ডার ডিলিট করতে চান?')) return;
+  let orders = store.get('alleen_orders', []);
+  orders = orders.filter(o => o.id !== id);
+  store.set('alleen_orders', orders);
+  syncOrdersToFirebase(orders);
+  loadOrders();
+  loadDashboard();
+}
+
+function loadSettings() {
+  const settings = Object.assign({}, DEFAULT_SETTINGS, store.get('alleen_settings', {}));
+  document.getElementById('setShop').value = settings.shop;
+  document.getElementById('setField').value = settings.field;
+  document.getElementById('setAddr').value = settings.addr;
+  document.getElementById('setPhone').value = settings.phone;
+  document.getElementById('setFacebook').value = settings.facebook || '';
+  document.getElementById('setBanner').value = settings.banner;
+  document.getElementById('setLogo').value = settings.logo || 'logo.png';
+}
+
+function handleSaveSettings(e) {
+  e.preventDefault();
+  const nextSettings = {
+    shop: document.getElementById('setShop').value.trim(),
+    field: document.getElementById('setField').value.trim(),
+    addr: document.getElementById('setAddr').value.trim(),
+    phone: document.getElementById('setPhone').value.trim(),
+    facebook: document.getElementById('setFacebook').value.trim(),
+    banner: document.getElementById('setBanner').value.trim(),
+    logo: document.getElementById('setLogo').value.trim() || 'logo.png'
+  };
+  store.set('alleen_settings', nextSettings);
+  db.ref('settings').set(nextSettings).catch(() => {});
+  alert('সেটিংস সেভ হয়েছে!');
+}
+
+function initAdminFirebaseSync() {
+  if (adminSyncStarted) return;
+  adminSyncStarted = true;
+
+  db.ref('products').on('value', snap => {
+    const val = snap.val();
+    if (val) {
+      const list = normalizeFirebaseList(val);
+      if (list.length > 0) {
+        store.set('alleen_products', list);
+        store.set('alleen_seed_v2', true);
+        store.set('alleen_initialized', true);
+        if (document.getElementById('tab-products').style.display !== 'none') loadProducts();
+        if (document.getElementById('tab-dashboard').style.display !== 'none') loadDashboard();
+      }
+    }
+  });
+
+  db.ref('orders').on('value', snap => {
+    const val = snap.val();
+    const list = val ? normalizeFirebaseList(val).sort((a, b) => new Date(b.at || 0) - new Date(a.at || 0)) : [];
+    store.set('alleen_orders', list);
+    if (document.getElementById('tab-orders').style.display !== 'none') loadOrders();
+    if (document.getElementById('tab-dashboard').style.display !== 'none') loadDashboard();
+  });
+
+  db.ref('reviews').on('value', snap => {
+    const val = snap.val();
+    const grouped = {};
+    if (val && typeof val === 'object') {
+      Object.keys(val).forEach(prodId => {
+        grouped[prodId] = normalizeFirebaseList(val[prodId]).sort((a, b) => new Date(b.at || 0) - new Date(a.at || 0));
+      });
+    }
+    store.set('alleen_reviews', grouped);
+    if (document.getElementById('tab-reviews').style.display !== 'none') loadReviews();
+  });
+
+  db.ref('settings').on('value', snap => {
+    const val = snap.val();
+    if (val && typeof val === 'object') {
+      store.set('alleen_settings', Object.assign({}, DEFAULT_SETTINGS, val));
+      if (document.getElementById('tab-settings').style.display !== 'none') loadSettings();
+    }
+  });
+}
+
+// AUTH STATE GATE
+auth.onAuthStateChanged(user => {
+  const loginScreen = document.getElementById('adminLoginScreen');
+  const mainApp = document.getElementById('adminMainApp');
+
+  if (user && user.email && user.email.toLowerCase() === ALLOWED_ADMIN_EMAIL.toLowerCase()) {
+    loginScreen.style.display = 'none';
+    mainApp.style.display = 'block';
+    loadDashboard();
+    initAdminFirebaseSync();
+  } else {
+    if (user) {
+      auth.signOut();
+      showAuthMessage('❌ এই ইমেইল অ্যাকাউন্টটির অ্যাডমিন অনুমতি নেই।', true);
+    }
+    mainApp.style.display = 'none';
+    loginScreen.style.display = 'flex';
+  }
+});
+</script>
+</body>
+</html>
